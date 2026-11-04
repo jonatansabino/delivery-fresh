@@ -130,5 +130,159 @@
 }
 @utility no-scrollbar {
   scrollbar-width: none;
-  &::-webkit-scrollbar { display: none; }
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+@layer base {
+  body {
+    margin: 0;
+    min-width: 320px;
+    font-family: var(--font-sans);
+  }
+  button,
+  a,
+  input,
+  select,
+  textarea {
+    -webkit-tap-highlight-color: transparent;
+  }
+  button {
+    cursor: pointer;
+  }
+  button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  :focus-visible {
+    outline: 3px solid var(--primary-strong);
+    outline-offset: 3px;
+  }
+}
+@layer components {
+  .page {
+    @apply mx-auto max-w-2xl px-4 pt-5 md:pt-8;
+  }
+  .page h1,
+  .admin-page h1 {
+    @apply text-2xl font-extrabold;
+  }
+  .page h2,
+  .admin-page h2 {
+    @apply text-lg font-bold;
+  }
+  .page label,
+  .admin-page label {
+    @apply block text-sm font-semibold;
+  }
+  .page input,
+  .page textarea,
+  .page select,
+  .admin-page input,
+  .admin-page textarea,
+  .admin-page select {
+    @apply mt-1 min-h-12 w-full min-w-0 rounded-xl border bg-card px-3 py-3 text-base;
+  }
+  .panel {
+    @apply rounded-2xl border bg-card p-4 shadow-card;
+    overflow-wrap: anywhere;
+  }
+  .btn {
+    @apply inline-flex min-h-12 items-center justify-center rounded-full bg-primary-strong px-5 py-3 text-center font-bold text-white;
+  }
+  .btn-secondary {
+    @apply inline-flex min-h-12 items-center justify-center rounded-full border bg-card px-5 py-3 text-center font-semibold;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+.dark {
+  --background: oklch(0.17 0.018 165);
+  --foreground: oklch(0.95 0.01 165);
+  --card: oklch(0.22 0.02 165);
+  --card-foreground: var(--foreground);
+  --popover: var(--card);
+  --popover-foreground: var(--foreground);
+  --muted: oklch(0.28 0.02 165);
+  --muted-foreground: oklch(0.76 0.015 165);
+  --border: oklch(0.36 0.02 165);
+  --input: var(--border);
+  --primary-soft: oklch(0.3 0.05 165);
+  --primary-strong: oklch(0.8 0.13 165);
+  --secondary: var(--primary-soft);
+  --secondary-foreground: var(--foreground);
+  --accent: oklch(0.72 0.18 47);
+  --accent-strong: oklch(0.78 0.15 47);
+}
+.dark .btn {
+  background: oklch(0.46 0.11 165);
+  color: white;
+}
+@layer base {
+  html {
+    scroll-padding-bottom: 180px;
+  }
+  input,
+  textarea,
+  select {
+    scroll-margin-block: 100px;
+  }
+  .checkbox {
+    width: 24px !important;
+    min-height: 24px !important;
+    height: 24px;
+    margin: 0 !important;
+    padding: 0 !important;
+    accent-color: var(--primary-strong);
+    flex-shrink: 0;
+  }
+  .address-form input,
+  .address-form select {
+    width: 100%;
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .btn,
+  .btn-secondary {
+    transition:
+      background-color 0.18s,
+      transform 0.18s;
+  }
+  .btn:active,
+  .btn-secondary:active {
+    transform: scale(0.98);
+  }
+}
+
+.dark .bg-primary-strong.text-white {
+  background-color: oklch(0.46 0.11 165);
+  color: white;
+}
+
+:root {
+  color-scheme: light;
+  --accent-foreground: oklch(0.21 0.034 264.665);
+}
+.dark {
+  color-scheme: dark;
+}
+.recharts-cartesian-axis-tick-value {
+  fill: var(--muted-foreground);
+}
+.recharts-default-tooltip {
+  background-color: var(--card) !important;
+  color: var(--foreground) !important;
+  border-color: var(--border) !important;
+  border-radius: 12px;
+}
+a.text-primary {
+  color: var(--primary-strong);
 }

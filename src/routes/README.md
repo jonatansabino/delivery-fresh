@@ -1,21 +1,9 @@
-# Routes
+# Rotas
 
-TanStack Start uses **file-based routing**. Every `.tsx` file in this directory
-defines a route. Do **not** create `src/pages/`, `src/routes/_app/index.tsx`, or
-`app/layout.tsx` — those are Next.js / Remix conventions. The only root layout
-is `src/routes/__root.tsx`.
+As rotas são declaradas explicitamente em `src/main.tsx` usando React Router DOM.
+Cada arquivo desta pasta exporta um componente de tela. `AppShell` fornece navegação
+mobile e desktop, e `CartProvider` fornece os dados locais compartilhados.
 
-## Conventions
-
-| File | URL |
-| --- | --- |
-| `index.tsx` | `/` |
-| `about.tsx` | `/about` |
-| `users/index.tsx` | `/users` |
-| `users/$id.tsx` | `/users/:id` (dynamic — bare `$`, no curly braces) |
-| `posts/{-$category}.tsx` | `/posts/:category?` (optional segment) |
-| `files/$.tsx` | `/files/*` (splat — read via `_splat` param, never `*`) |
-| `_layout.tsx` | layout route (renders children via `<Outlet />`) |
-| `__root.tsx` | app shell — wraps every page; preserve `<Outlet />` |
-
-`routeTree.gen.ts` is auto-generated. Don't edit it by hand.
+A rota de detalhes é `/produto/:id`; o componente usa `useParams`. Não há loaders,
+server functions, SSR ou arquivos de rotas gerados. Em hospedagem estática, redirecione
+rotas desconhecidas para `index.html` para permitir recarregamento de links diretos.

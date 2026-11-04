@@ -13,3 +13,17 @@ describe("plan pricing", () => {
     expect(computeTotals({ "bowl-vegano": 15 }, "casal").subtotal).toBe(285);
   });
 });
+
+describe("preços e cupons", () => {
+  it("carrinho vazio não cobra plano nem entrega", () => {
+    expect(computeTotals({}, "essencial").total).toBe(0);
+  });
+  it("ignora referências inválidas e quantidades negativas", () => {
+    expect(computeTotals({ falso: 2, "bowl-vegano": -2 }).total).toBe(0);
+  });
+  it("aplica FIT10 no subtotal sem descontar entrega", () => {
+    const t = computeTotals({ "bowl-vegano": 5 }, "essencial", undefined, undefined, 7.9, "FIT10");
+    expect(t.discount).toBe(11);
+    expect(t.total).toBe(106.9);
+  });
+});

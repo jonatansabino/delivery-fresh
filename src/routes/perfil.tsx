@@ -1,38 +1,103 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { ChevronRight, MapPin, MessageCircle, Salad, User } from "lucide-react";
-import { WHATSAPP_NUMBER } from "@/lib/menu";
-
-export const Route = createFileRoute("/perfil")({
-  head: () => ({
-    meta: [
-      { title: "Perfil — FreshBites Fit" },
-      { name: "description", content: "Seus dados, endereços e preferências alimentares." },
-      { property: "og:title", content: "Perfil — FreshBites Fit" },
-      { property: "og:description", content: "Sua conta FreshBites Fit." },
-    ],
-  }),
-  component: Perfil,
-});
-
-function Perfil() {
+import { useState, type FormEvent } from "react";
+import { Link } from "react-router-dom";
+import { User, Heart, CalendarDays, Gift, Bell, Calculator } from "lucide-react";
+import { useCart } from "@/lib/cart";
+import { CATEGORIES } from "@/lib/menu";
+import { AddressBook } from "@/components/address/AddressBook";
+export default function Perfil() {
+  const store = useCart();
+  const [form, setForm] = useState(store.preferences);
+  const [message, setMessage] = useState("");
+  function save(e: FormEvent) {
+    e.preventDefault();
+    if (store.update((s) => ({ ...s, preferences: form })))
+      setMessage("Preferências salvas neste dispositivo.");
+  }
   return (
-    <div className="px-4 pt-4 md:mx-auto md:max-w-xl md:pt-8">
-      <div className="flex items-center gap-4">
-        <span className="grid size-16 place-items-center rounded-full bg-primary-soft text-primary-strong"><User className="size-7" /></span>
-        <div>
-          <h1 className="text-xl font-extrabold">Olá!</h1>
-          <p className="text-sm text-muted-foreground">Login com conta chega em breve.</p>
-        </div>
-      </div>
-      <ul className="mt-6 divide-y overflow-hidden rounded-2xl bg-card shadow-card">
+    <section className="page space-y-5">
+      <User className="size-10 text-primary" />
+      <h1>Meu perfil demonstrativo</h1>
+      <p>Sem login: seus dados ficam somente neste navegador.</p>
+      <div className="grid grid-cols-2 gap-3">
         {[
-          { i: MapPin, l: "Meus endereços", to: "/checkout" as const },
-          { i: Salad, l: "Preferências alimentares", to: "/cardapio" as const },
-        ].map(({ i: I, l, to }) => (
-          <li key={l}><Link to={to} className="flex min-h-14 items-center gap-3 px-4"><I className="size-5 text-primary" /><span className="flex-1 font-semibold">{l}</span><ChevronRight className="size-4 text-muted-foreground" /></Link></li>
+          { to: "/favoritos", label: `Favoritas (${store.favorites.length})`, icon: Heart },
+          { to: "/meu-plano", label: "Minha semana", icon: CalendarDays },
+          { to: "/freshpoints", label: "FreshPoints", icon: Gift },
+          {
+            to: "/notificacoes",
+            label: `Notificações (${store.notifications.filter((n) => !n.read).length})`,
+            icon: Bell,
+          },
+          { to: "/economia", label: "Simular economia", icon: Calculator },
+        ].map(({ to, label, icon: Icon }) => (
+          <Link key={to} className="panel flex items-center gap-2 text-sm font-bold" to={to}>
+            <Icon className="size-5 shrink-0 text-primary-strong" />
+            {label}
+          </Link>
         ))}
-        <li><a href={`https://wa.me/${WHATSAPP_NUMBER}`} target="_blank" rel="noreferrer" className="flex min-h-14 items-center gap-3 px-4"><MessageCircle className="size-5 text-primary" /><span className="flex-1 font-semibold">Falar no WhatsApp</span><ChevronRight className="size-4 text-muted-foreground" /></a></li>
-      </ul>
-    </div>
+      </div>
+      <form className="space-y-3" onSubmit={save}>
+        <label>
+          Nome
+          <input
+            required
+            minLength={2}
+            maxLength={100}
+            value={form.name}
+            onChange={(e) => setForm({ ...form, name: e.target.value })}
+          />
+        </label>
+        <label>
+          WhatsApp
+          <input
+            type="tel"
+            maxLength={20}
+            value={form.phone}
+            onChange={(e) => setForm({ ...form, phone: e.target.value })}
+          />
+        </label>
+        <label>
+          E-mail (opcional)
+          <input
+            type="email"
+            maxLength={150}
+            value={form.email}
+            onChange={(e) => setForm({ ...form, email: e.target.value })}
+          />
+        </label>
+        <label>
+          Preferência alimentar
+          <select value={form.diet} onChange={(e) => setForm({ ...form, diet: e.target.value })}>
+            {["Todas", ...CATEGORIES].map((c) => (
+              <option key={c}>{c}</option>
+            ))}
+          </select>
+        </label>
+        <label>
+          Aparência
+          <select
+            value={form.theme}
+            onChange={(e) => {
+              const theme = e.target.value as typeof form.theme;
+              setForm({ ...form, theme });
+              store.update((s) => ({ ...s, preferences: { ...s.preferences, theme } }));
+            }}
+          >
+            <option value="system">Usar tema do dispositivo</option>
+            <option value="light">Claro</option>
+            <option value="dark">Escuro</option>
+          </select>
+        </label>
+        <button className="btn">Salvar preferências</button>
+      </form>
+      <p role="status">{message}</p>
+      <AddressBook />
+      <Link className="btn-secondary" to="/pedidos">
+        Histórico de pedidos
+      </Link>
+      <Link to="/admin" className="btn-secondary">
+        Administração demonstrativa
+      </Link>
+    </section>
   );
 }
